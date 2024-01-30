@@ -5,6 +5,40 @@ const LOADING_SPINNER = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10
 </svg>
 `;
 
+const WATER_LEVEL_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="50" height="50">
+<!-- River -->
+<path d="M10 50 Q 50 90, 90 50 Q 50 10, 10 50 Z" fill="#64B5F6" />
+<!-- Water -->
+<path d="M10 50 Q 50 70, 90 50 Q 50 30, 10 50 Z" fill="#2196F3" />
+</svg>
+`;
+
+const TEMPERATURE_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="50" height="50">
+<!-- Thermometer body -->
+<rect x="40" y="10" width="20" height="80" fill="#757575" />
+<!-- Temperature bulb -->
+<circle cx="50" cy="90" r="15" fill="#F44336" />
+<!-- Temperature line -->
+<line x1="50" y1="20" x2="50" y2="90" stroke="#fff" stroke-width="3" />
+</svg>
+`;
+
+const WIND_SPEED_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="50" height="50">
+<!-- Wind icon body -->
+<circle cx="50" cy="50" r="45" fill="#90CAF9" />
+<!-- Wind lines -->
+<line x1="30" y1="50" x2="70" y2="50" stroke="#fff" stroke-width="5" />
+<line x1="30" y1="40" x2="70" y2="60" stroke="#fff" stroke-width="5" />
+<line x1="30" y1="60" x2="70" y2="40" stroke="#fff" stroke-width="5" />
+</svg>
+`;
+
+const icons = {
+    'water-level': WATER_LEVEL_ICON,
+    'temperature': TEMPERATURE_ICON,
+    'wind-speed': WIND_SPEED_ICON,
+}
+
 const initializeAmpel = () => {
     const el = document.createElement('div');
     el.classList.add('ampel');
@@ -30,7 +64,7 @@ const initializeAmpel = () => {
     }
 };
 
-const createMeasurement = (label, unit, value) => {
+const createMeasurement = (label, unit, value, iconName) => {
     const el = document.createElement('div');
     el.classList.add('measurement');
     
@@ -49,6 +83,10 @@ const createMeasurement = (label, unit, value) => {
     unitEl.innerText = unit;
     valueEl.appendChild(unitEl);
 
+    const icon = document.createElement('span');
+    icon.innerHTML = icons[iconName];
+
+    el.appendChild(icon);
     el.appendChild(labelEl);
     el.appendChild(valueEl);
 
@@ -61,7 +99,7 @@ const createMeasurement = (label, unit, value) => {
 }
 
 const initializeWaterLevel = () => {
-    const el = createMeasurement('Wasserstand', 'cm', 0);
+    const el = createMeasurement('Wasserstand', 'cm', 0, 'water-level');
     return {
         waterLevel: el.element,
         setWaterLevel: el.setValue
@@ -69,7 +107,7 @@ const initializeWaterLevel = () => {
 };
 
 const initializeTemperature = () => {
-    const el = createMeasurement('Temperatur', '°C', 0);
+    const el = createMeasurement('Temperatur', '°C', 0, 'temperature');
     return {
         temperature: el.element,
         setTemperature: el.setValue
@@ -77,7 +115,7 @@ const initializeTemperature = () => {
 };
 
 const initializeWind = () => {
-    const el = createMeasurement('Wind', 'km/h', 0);
+    const el = createMeasurement('Wind', 'km/h', 0, 'wind-speed');
     return {
         wind: el.element,
         setWind: el.setValue
