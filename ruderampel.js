@@ -164,19 +164,39 @@ const initialState = {
     loading: true,
 }
 
-const testState = {
-    loading: false,
-    windSpeed: 10.0,
-    waterLevel: 1.3,
-    temperature: 99,
+const requestWaterLevel = async () => {
+    try {
+        const response = await fetch('https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations/42900201.json?includeCurrentMeasurement=true&includeTimeseries=true');
+        const data = await response.json();
+        const timeseries = data?.timeseries;
+
+        if (!timeseries) {
+            console.warn("No timeseries found");
+            return null;
+        }
+
+        const waterLevelMeasurement = timeseries.find((ts) => ts.shortname === "W");
+        const waterLevelCm = waterLevelMeasurement?.currentMeasurement?.value;
+        if (!waterLevelCm) {
+            console.warn("No water level found");
+            return null;
+        }
+        
+        return waterLevelCm;
+    } catch (e) {
+        console.error(e);
+        return null;
+    }
 }
 
-const requestData = () => {
-    return new Promise((res) => {
-        setTimeout(() => {
-            res(testState);
-        }, 3000);
-    });
+const requestData = async () => {
+    const waterLevel = await requestWaterLevel();
+    return {
+        loading: false,
+        windSpeed: 10.0,
+        waterLevel: waterLevel,
+        temperature: 99,
+    }
 }
 
 const initialize = (container) => {
