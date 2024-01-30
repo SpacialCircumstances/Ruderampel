@@ -9,9 +9,24 @@ const initializeAmpel = () => {
     const el = document.createElement('div');
     el.classList.add('ampel');
 
+    const color = document.createElement('span');
+    color.classList.add('color');
+    
+    const text = document.createElement('span');
+    color.classList.add('description');
+    
+    el.appendChild(color);
+    el.appendChild(text);
+
     return {
         ampel: el,
-        setAmpel: (state) => {}
+        setAmpel: (state) => {
+            el.classList.remove('green');
+            el.classList.remove('red');
+            el.classList.remove('yellow');
+            el.classList.add(state);
+            text.innerText = ampelColorToDescription(state);
+        }
     }
 };
 
@@ -123,11 +138,25 @@ const initializeElements = (container) => {
     }
 };
 
+const ampelColorToDescription = (color) => {
+    if (color === 'green') {
+        return 'Der Ruderbetrieb ist möglich.';
+    }
+}
+
+const computeAmpel = (waterLevel, temperature, windSpeed) => {
+    return 'green';
+}
+
 const renderState = (state, elements) => {
     if (state.loading) {
         elements.setLoading(true);
     } else {
         elements.setLoading(false);
+        elements.setTemperature(state.temperature);
+        elements.setWaterLevel(state.waterLevel);
+        elements.setWind(state.windSpeed);
+        elements.setAmpel(computeAmpel(state.waterLevel, state.temperature, state.windSpeed));
     }
 }
 
@@ -135,8 +164,19 @@ const initialState = {
     loading: true,
 }
 
-const requestData = async () => {
-   return initialState;
+const testState = {
+    loading: false,
+    windSpeed: 10.0,
+    waterLevel: 1.3,
+    temperature: 99,
+}
+
+const requestData = () => {
+    return new Promise((res) => {
+        setTimeout(() => {
+            res(testState);
+        }, 3000);
+    });
 }
 
 const initialize = (container) => {
