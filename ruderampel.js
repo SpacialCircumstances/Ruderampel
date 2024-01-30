@@ -164,9 +164,11 @@ const initialState = {
     loading: true,
 }
 
+const WATER_LEVEL_URL = "https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations/42900201.json?includeCurrentMeasurement=true&includeTimeseries=true";
+
 const requestWaterLevel = async () => {
     try {
-        const response = await fetch('https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations/42900201.json?includeCurrentMeasurement=true&includeTimeseries=true');
+        const response = await fetch(WATER_LEVEL_URL);
         const data = await response.json();
         const timeseries = data?.timeseries;
 
@@ -189,13 +191,48 @@ const requestWaterLevel = async () => {
     }
 }
 
+const WEATHER_URL = "https://api.open-meteo.com/v1/forecast?latitude=51.4035&longitude=9.6320&current_weather=true";
+
+const requestWeatherData = async () => {
+    try {
+        const response = await fetch(WEATHER_URL);
+        const data = await response.json();
+        const currentWeather = data?.current_weather;
+
+        if (!currentWeather) {
+            console.warn("No current weather found");
+            return null;
+        }
+
+        const temperature = currentWeather?.temperature;
+        const windSpeed = currentWeather?.windspeed;
+
+        if (!temperature || !windSpeed) {
+            console.warn("No temperature or wind speed found");
+            return null;
+        }
+        
+        return {
+            temperature,
+            windSpeed
+        };
+    } catch (e) {
+        console.error(e);
+        return null;
+    }
+}
+
 const requestData = async () => {
     const waterLevel = await requestWaterLevel();
+    const weatherData = await requestWeatherData();
+    const windSpeed = weatherData?.windSpeed;
+    const temperature = weatherData?.temperature;
+
     return {
         loading: false,
-        windSpeed: 10.0,
-        waterLevel: waterLevel,
-        temperature: 99,
+        windSpeed,
+        waterLevel,
+        temperature,
     }
 }
 
