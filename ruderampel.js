@@ -1,3 +1,10 @@
+const LOADING_SPINNER = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" width="50" height="50">
+<circle cx="50" cy="50" fill="none" stroke="#000" stroke-width="10" r="35" stroke-dasharray="164.93361431346415 56.97787143782138">
+  <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" values="0 50 50;360 50 50" keyTimes="0;1" />
+</circle>
+</svg>
+`;
+
 const initializeAmpel = () => {
     const el = document.createElement('div');
     el.classList.add('ampel');
@@ -62,6 +69,13 @@ const initializeWind = () => {
     }
 };
 
+const initializeLoadingSpinner = () => {
+    const el = document.createElement('div');
+    el.classList.add('loading-spinner');
+    el.innerHTML = LOADING_SPINNER;
+    return el;
+}
+
 const initializeElements = (container) => {
     const root = document.createElement('div');
     root.classList.add('ruderampel');
@@ -83,8 +97,25 @@ const initializeElements = (container) => {
 
     root.appendChild(measurements);
 
+    const loadingSpinner = initializeLoadingSpinner();
+    loadingSpinner.classList.add('hidden');
+    root.appendChild(loadingSpinner);
+
+    const setLoading = (loading) => {
+        if (loading) {
+            ampel.classList.add('hidden');
+            measurements.classList.add('hidden');
+            loadingSpinner.classList.remove('hidden');
+        } else {
+            ampel.classList.remove('hidden');
+            measurements.classList.remove('hidden');
+            loadingSpinner.classList.add('hidden');
+        }
+    }
+
     return {
         root,
+        setLoading,
         setAmpel,
         setTemperature,
         setWaterLevel,
@@ -92,8 +123,31 @@ const initializeElements = (container) => {
     }
 };
 
+const renderState = (state, elements) => {
+    if (state.loading) {
+        elements.setLoading(true);
+    } else {
+        elements.setLoading(false);
+    }
+}
+
+const initialState = {
+    loading: true,
+}
+
+const requestData = async () => {
+   return initialState;
+}
+
 const initialize = (container) => {
-    let state = initializeElements(container);
+    const elements = initializeElements(container);
+    let state = initialState;
+    renderState(state, elements);
+    
+    requestData().then((newState) => {
+        state = newState;
+        renderState(state, elements);
+    });
 };
 
 window.ruderampel = {
