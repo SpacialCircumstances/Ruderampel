@@ -9,11 +9,11 @@ const initializeAmpel = () => {
     const el = document.createElement('div');
     el.classList.add('ampel');
 
-    const color = document.createElement('span');
+    const color = document.createElement('p');
     color.classList.add('color');
     
-    const text = document.createElement('span');
-    color.classList.add('description');
+    const text = document.createElement('p');
+    text.classList.add('description');
     
     el.appendChild(color);
     el.appendChild(text);
@@ -21,10 +21,10 @@ const initializeAmpel = () => {
     return {
         ampel: el,
         setAmpel: (state) => {
-            el.classList.remove('green');
-            el.classList.remove('red');
-            el.classList.remove('yellow');
-            el.classList.add(state);
+            color.classList.remove('green');
+            color.classList.remove('red');
+            color.classList.remove('yellow');
+            color.classList.add(state);
             text.innerText = ampelColorToDescription(state);
         }
     }

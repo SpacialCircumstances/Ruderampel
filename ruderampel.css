@@ -1,7 +1,41 @@
 .ruderampel {
     display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.hidden {
+.ruderampel .ampel {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ruderampel .ampel .color {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+
+.ruderampel .ampel .green {
+    background-color: green;
+}
+
+.ruderampel .ampel .yellow {
+    background-color: yellow;
+}
+
+.ruderampel .ampel .red {
+    background-color: red;
+}
+
+.ruderampel .measurements {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ruderampel .hidden {
     display: none;
 }
