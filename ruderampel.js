@@ -33,7 +33,15 @@ const WIND_SPEED_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10
 </svg>
 `;
 
-const icons = {
+const WATER_LEVEL_WARN = 280;
+
+const WATER_LEVEL_STOP = 320;
+
+const TEMPERATURE_WARN = 5;
+
+const WIND_SPEED_WARN = 60;
+
+const ICONS = {
     'water-level': WATER_LEVEL_ICON,
     'temperature': TEMPERATURE_ICON,
     'wind-speed': WIND_SPEED_ICON,
@@ -58,8 +66,8 @@ const initializeAmpel = () => {
             color.classList.remove('green');
             color.classList.remove('red');
             color.classList.remove('yellow');
-            color.classList.add(state);
-            text.innerText = ampelColorToDescription(state);
+            color.classList.add(ampelStateToColor(state));
+            text.innerText = ampelStateToDescription(state);
         }
     }
 };
@@ -84,7 +92,7 @@ const createMeasurement = (label, unit, value, iconName) => {
     valueEl.appendChild(unitEl);
 
     const icon = document.createElement('span');
-    icon.innerHTML = icons[iconName];
+    icon.innerHTML = ICONS[iconName];
 
     el.appendChild(icon);
     el.appendChild(labelEl);
@@ -176,15 +184,51 @@ const initializeElements = (container) => {
     }
 };
 
-const ampelColorToDescription = (color) => {
-    if (color === 'green') {
-        return 'Der Ruderbetrieb ist möglich.';
+const ampelStateToColor = (state) => {
+    if (state === 'ok') {
+        return 'green';
+    }  else if (state === 'waterLevelWarn') {
+        return 'yellow';
+    } else if (state === 'waterLevelStop') {
+        return 'red';
+    } else if (state === 'windSpeedWarn') {
+        return 'yellow';
+    } else if (state === 'temperatureWarn') {
+        return 'yellow';
+    } else {
+        return null;
     }
-}
+};
+
+const ampelStateToDescription = (state) => {
+    if (state === 'ok') {
+        return 'Der Ruderbetrieb ist möglich.';
+    } else if (state === 'waterLevelWarn') {
+        return 'Der Wasserstand ist erhöht. Vorsicht!';
+    } else if (state === 'waterLevelStop') {
+        return 'Der Wassersta1nd ist zu hoch. Ruderbetrieb eingestellt.';
+    } else if (state === 'windSpeedWarn') {
+        return 'Der Wind ist stark. Vorsicht!';
+    } else if (state === 'temperatureWarn') {
+        return 'Die Temperatur ist niedrig. Vorsicht!';
+    } else {
+        return null;
+    }
+};
 
 const computeAmpel = (waterLevel, temperature, windSpeed) => {
-    return 'green';
-}
+    if (waterLevel > WATER_LEVEL_WARN) {
+        return 'waterLevelWarn';
+    } else if (waterLevel > WATER_LEVEL_STOP) {
+        return 'waterLevelStop';
+    } else if (windSpeed > WIND_SPEED_WARN) {
+        return 'windSpeedWarn';
+    } else if (temperature < TEMPERATURE_WARN) {
+        return 'temperatureWarn';
+    }
+
+    return 'ok';
+};
 
 const renderState = (state, elements) => {
     if (state.loading) {
