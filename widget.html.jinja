@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Ruderampel Widget</title>
+</head>
+<body>
+    <style>
+        {% include 'ruderampel.css' %}
+    </style>
+    <script>
+        {% include 'ruderampel.js' %}
+    </script>
+
+    <div id="container">
+    </div>
+
+    <script>
+        window.ruderampel.initialize(document.getElementById("container"));
+    </script>
+</body>
+</html>
