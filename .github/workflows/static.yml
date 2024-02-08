@@ -32,11 +32,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Generate widget from template
-        uses: cuchi/jinja2-action@v1.2.2
+        uses: release-engineers/action-template@v2
         with:
-          template: widget.html.jinja
-          output_file: widget.html
-          strict: true
+          source: widget.html.jinja
+          target: widget.html
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
